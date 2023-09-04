@@ -21,7 +21,7 @@ export class App extends Component {
 
   getQuery = ({ query, images }) => {
     if (query.trim() !== this.state.query) {
-      this.setState({ query: query, images: images });
+      this.setState({ query: query, images: images, page: 1 });
     }
   };
   async componentDidUpdate(prevProps, prevState) {
