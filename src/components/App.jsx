@@ -38,7 +38,7 @@ export class App extends Component {
         }
         this.setState(prevState => ({
           images: [...prevState.images, ...data.hits],
-          loadMore: this.state.page < Math.ceil(data.totalHits / 12),
+          loadMore: page < Math.ceil(data.totalHits / 12),
         }));
       } catch (err) {
         Notiflix.Notify.failure('Something went wrong, please try again later');
@@ -62,7 +62,7 @@ export class App extends Component {
     this.setState({ showModal: false, openedImg: '' });
   };
   render() {
-    const { showModal, openedImg } = this.state;
+    const { showModal, openedImg, images, isLoading, loadMore } = this.state;
     return (
       <div className="app">
         <ModalWindow
@@ -71,14 +71,11 @@ export class App extends Component {
         />
         <Searchbar onSubmit={this.getQuery} />
 
-        {this.state.isLoading && <Loader />}
-        {this.state.images.length > 0 && (
+        {isLoading && <Loader />}
+        {images.length > 0 && (
           <>
-            <ImageGallery
-              images={this.state.images}
-              onClick={this.onImageClick}
-            />
-            {this.state.loadMore && <Button onLoadMore={this.onLoadMore} />}
+            <ImageGallery images={images} onClick={this.onImageClick} />
+            {loadMore && <Button onLoadMore={this.onLoadMore} />}
           </>
         )}
       </div>
