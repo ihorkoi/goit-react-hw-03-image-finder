@@ -54,11 +54,9 @@ export class App extends Component {
     return;
   };
   onImageClick = img => {
-    console.log(img);
     this.setState({ showModal: true, openedImg: img });
   };
   onImageClose = evt => {
-    console.log(evt);
     this.setState({ showModal: false, openedImg: '' });
   };
   render() {
