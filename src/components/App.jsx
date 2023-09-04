@@ -4,9 +4,10 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import Notiflix from 'notiflix';
+// import Modal from 'react-modal';
 // import { RotatingLines as Loader } from 'react-loader-spinner';
 
-import fetchQuery from './API';
+import { fetchQuery } from './API';
 
 export class App extends Component {
   state = {
@@ -20,24 +21,26 @@ export class App extends Component {
       this.setState({ query: query, images: images });
     }
   };
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { page, query } = this.state;
     if (page !== prevState.page || query !== prevState.query) {
-      this.setState({ isLoading: true });
-      fetchQuery(page, query)
-        .then(data => {
-          if (data.hits.length > 0) {
-            this.setState(prevState => ({
-              images: [...prevState.images, ...data.hits],
-              isLoading: false,
-            }));
-          } else {
-            Notiflix.Notify.failure(
-              "We couldn't find any matches for your query"
-            );
-          }
-        })
-        .catch(err => Notiflix.Notify.failure(err.message));
+      try {
+        this.setState({ isLoading: true });
+        const data = await fetchQuery(page, query);
+        if (data.hits.length === 0) {
+          Notiflix.Notify.failure(
+            "Sorry, we couldn't find any matches for your query"
+          );
+          return;
+        }
+        this.setState(prevState => ({
+          images: [...prevState.images, ...data.hits],
+        }));
+      } catch (err) {
+        Notiflix.Notify.failure('Something went wrong, please try again later');
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   }
   onLoadMore = () => {
