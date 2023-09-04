@@ -1,6 +1,11 @@
 import { Searchbar } from './Searchbar/Searchbar';
 import { Component } from 'react';
 import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Button } from './Button/Button';
+import { Loader } from './Loader/Loader';
+import Notiflix from 'notiflix';
+// import { RotatingLines as Loader } from 'react-loader-spinner';
+
 import fetchQuery from './API';
 
 export class App extends Component {
@@ -8,55 +13,51 @@ export class App extends Component {
     page: 1,
     query: '',
     images: [],
+    isLoading: false,
   };
-  getQuery = query => {
-    this.setState({ query: query });
+  getQuery = ({ query, images }) => {
+    if (query.trim() !== this.state.query) {
+      this.setState({ query: query, images: images });
+    }
   };
-
   componentDidUpdate(prevProps, prevState) {
     const { page, query } = this.state;
     if (page !== prevState.page || query !== prevState.query) {
-      fetchQuery(page, query).then(data => {
-        this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
-        }));
-      });
+      this.setState({ isLoading: true });
+      fetchQuery(page, query)
+        .then(data => {
+          if (data.hits.length > 0) {
+            this.setState(prevState => ({
+              images: [...prevState.images, ...data.hits],
+              isLoading: false,
+            }));
+          } else {
+            Notiflix.Notify.failure(
+              "We couldn't find any matches for your query"
+            );
+          }
+        })
+        .catch(err => Notiflix.Notify.failure(err.message));
     }
   }
-  fetchData = () => {
-    // evt.preventDefault();
-    // const form = evt.target;
-    // const query = form.elements.query.value;
-    // this.setState({ query: query });
-    // fetch(
-    //   `https://pixabay.com/api/?q=${query}&page=${this.state.page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-    // )
-    //   .then(resp => {
-    //     if (!resp.ok) {
-    //       throw new Error('Something went wrong, please try again later');
-    //     }
-    //     return resp.json();
-    //   })
-    //   // .then(data => console.log(data.hits))
-    //   .catch(err => alert(err.message))
-    //   .finally(() => console.log(this.state.page, this.state.query));
-    // form.reset();
+  onLoadMore = () => {
+    this.setState(prevState => {
+      return {
+        page: prevState.page + 1,
+      };
+    });
+    return;
   };
   render() {
     return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-        }}
-      >
+      <div className="app">
         <Searchbar onSubmit={this.getQuery} />
+        {this.state.isLoading && <Loader />}
         {this.state.images.length > 0 && (
-          <ImageGallery images={this.state.images} />
+          <>
+            <ImageGallery images={this.state.images} />
+            <Button onLoadMore={this.onLoadMore} />
+          </>
         )}
       </div>
     );

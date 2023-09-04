@@ -7,19 +7,20 @@ export class Searchbar extends Component {
     const query = form.elements.query.value;
     this.props.onSubmit({
       query: query,
+      images: [],
     });
     form.reset();
   };
   render() {
     return (
       <header className="searchbar">
-        <form className="form" onSubmit={this.extractQuery}>
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
+        <form className="searchForm" onSubmit={this.extractQuery}>
+          <button type="submit" className="searchForm-button">
+            <span className="searchForm-button-label">Search</span>
           </button>
 
           <input
-            className="input"
+            className="searchForm-input"
             name="query"
             type="text"
             autoComplete="off"
