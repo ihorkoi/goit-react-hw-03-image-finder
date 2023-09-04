@@ -15,6 +15,7 @@ export class App extends Component {
     images: [],
     isLoading: false,
     showModal: false,
+    loadMore: false,
     openedImg: '',
   };
 
@@ -37,6 +38,7 @@ export class App extends Component {
         }
         this.setState(prevState => ({
           images: [...prevState.images, ...data.hits],
+          loadMore: this.state.page < Math.ceil(data.totalHits / 12),
         }));
       } catch (err) {
         Notiflix.Notify.failure('Something went wrong, please try again later');
@@ -76,7 +78,7 @@ export class App extends Component {
               images={this.state.images}
               onClick={this.onImageClick}
             />
-            <Button onLoadMore={this.onLoadMore} />
+            {this.state.loadMore && <Button onLoadMore={this.onLoadMore} />}
           </>
         )}
       </div>
