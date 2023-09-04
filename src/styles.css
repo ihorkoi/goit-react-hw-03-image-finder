@@ -24,6 +24,7 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
+  object-fit: cover;
 }
 
 /*
@@ -210,4 +211,11 @@ img {
 
 .spiner {
   margin: 0 auto;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

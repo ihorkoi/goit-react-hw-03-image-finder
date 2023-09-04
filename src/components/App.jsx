@@ -4,8 +4,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import Notiflix from 'notiflix';
-// import Modal from 'react-modal';
-// import { RotatingLines as Loader } from 'react-loader-spinner';
+import { ModalWindow } from './Modal/Modal';
 
 import { fetchQuery } from './API';
 
@@ -15,7 +14,10 @@ export class App extends Component {
     query: '',
     images: [],
     isLoading: false,
+    showModal: false,
+    openedImg: '',
   };
+
   getQuery = ({ query, images }) => {
     if (query.trim() !== this.state.query) {
       this.setState({ query: query, images: images });
@@ -51,14 +53,31 @@ export class App extends Component {
     });
     return;
   };
+  onImageClick = img => {
+    console.log(img);
+    this.setState({ showModal: true, openedImg: img });
+  };
+  onImageClose = evt => {
+    console.log(evt);
+    this.setState({ showModal: false, openedImg: '' });
+  };
   render() {
+    const { showModal, openedImg } = this.state;
     return (
       <div className="app">
+        <ModalWindow
+          props={{ showModal, openedImg }}
+          onImageClose={this.onImageClose}
+        />
         <Searchbar onSubmit={this.getQuery} />
+
         {this.state.isLoading && <Loader />}
         {this.state.images.length > 0 && (
           <>
-            <ImageGallery images={this.state.images} />
+            <ImageGallery
+              images={this.state.images}
+              onClick={this.onImageClick}
+            />
             <Button onLoadMore={this.onLoadMore} />
           </>
         )}

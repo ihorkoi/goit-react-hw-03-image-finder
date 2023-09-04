@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
 
 export class Searchbar extends Component {
   extractQuery = evt => {
@@ -16,7 +17,7 @@ export class Searchbar extends Component {
       <header className="searchbar">
         <form className="searchForm" onSubmit={this.extractQuery}>
           <button type="submit" className="searchForm-button">
-            <span className="searchForm-button-label">Search</span>
+            {<HiMagnifyingGlass style={{ width: 24, height: 24 }} />}
           </button>
 
           <input
